@@ -1,0 +1,15 @@
+Step 1: Use cases and constraints
+    Ask clarifying questions
+    Understand / outline use cases
+    State assumptions
+    Back of envelope calculations?
+Step 2: Create High Level Design (subsystem components)
+Step 3: Design Core Components
+    Ask: Which area to focus on first, etc? 
+    Discuss Tradeoffs
+    Clarify how much code to write
+Step 4: Scale the design
+    for web: load balancers, web server, reverse proxy
+             cdn, master-slave data write server, read replicas,
+             services, async jobs (with queues) -> 202, 302 redirect
+             

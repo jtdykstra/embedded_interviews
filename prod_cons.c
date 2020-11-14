@@ -9,7 +9,8 @@ sem_t emptyCount;
 sem_t fillCount;
 pthread_mutex_t lock;
 int produceCount = 15;
-int consumeCount = 15;
+int consumeCount = 10;
+int consumeCountOne = 5;
 
 int produceItem()
 {
@@ -30,7 +31,7 @@ void *producer(void *arg)
     }
 }
 
-void *consumer(void *arg)
+void *consumerZero(void *arg)
 {
     while(consumeCount--)
     {
@@ -39,13 +40,27 @@ void *consumer(void *arg)
         int item = q_dequeue(&queue);
         pthread_mutex_unlock(&lock);
         sem_post(&emptyCount);
-        printf("consumed item %d\n", item);
+        printf("consumerZero consumed item %d\n", item);
+    }
+}
+
+void *consumerOne(void *arg)
+{
+    while(consumeCountOne--)
+    {
+        sem_wait(&fillCount);
+        pthread_mutex_lock(&lock);
+        int item = q_dequeue(&queue);
+        pthread_mutex_unlock(&lock);
+        sem_post(&emptyCount);
+        printf("consumerOne consumed item %d\n", item);
     }
 }
 
 int main() {
     pthread_t threadOneId;
     pthread_t threadTwoId;
+    pthread_t threadThreeId;
 
     sem_init(&fillCount, 0, 0);
     sem_init(&emptyCount, 0, 1);
@@ -64,7 +79,8 @@ int main() {
     q_free(&queue);*/
 
     int err1 = pthread_create(&threadOneId, NULL, &producer, NULL);
-    int err2 = pthread_create(&threadTwoId, NULL, &consumer, NULL);
+    int err2 = pthread_create(&threadTwoId, NULL, &consumerZero, NULL);
+    int err3 = pthread_create(&threadThreeId, NULL, &consumerOne, NULL);
     
     pthread_mutex_destroy(&lock);
     pthread_exit(NULL);
